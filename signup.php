@@ -184,7 +184,7 @@
 		data.data_type = type;
 		var data_string = JSON.stringify(data);
 
-		 xml.open("POST","http://localhost:8080/api.php",true);
+		xml.open("POST","api.php",true);
 		xml.send(data_string);
    	}
 
