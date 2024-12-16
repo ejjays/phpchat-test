@@ -1,115 +1,95 @@
-<?php 
+<?php
 
-Class Database
+class Database
 {
+    private $con;
 
-	private $con;
+    // Construct
+    function __construct()
+    {
+        $this->con = $this->connect();
+    }
 
-	//construct
-	function __construct()
-	{
+    // Connect to db
+    private function connect()
+    {
+        $string = "mysql:host=" . DBHOST . ";dbname=" . DBNAME;
 
-		$this->con = $this->connect();
-	}
+        try {
+            $connection = new PDO($string, DBUSER, DBPASS);
+            $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            return $connection;
+        } catch (PDOException $e) {
+            $info = (object)[];
+            $info->message = "Database connection failed: " . $e->getMessage();
+            $info->data_type = "error";
+            echo json_encode($info);
+            die();
+        }
+    }
 
-	//connect to db
-	private function connect()
-	{
+    // Write to database
+    public function write($query, $data_array = [])
+    {
+        $con = $this->connect();
+        $statement = $con->prepare($query);
+        $check = $statement->execute($data_array);
 
-		$string = "mysql:host=localhost;dbname=mychat_db";
-		try
-		{
+        if ($check) {
+            return true;
+        }
 
-			$connection = new PDO($string,DBUSER,DBPASS);
-			return $connection;
+        return false;
+    }
 
-		}catch(PDOException $e)
-		{
-			echo $e->getMessage();
-			die;
-		}
+    // Read from database
+    public function read($query, $data_array = [])
+    {
+        $con = $this->connect();
+        $statement = $con->prepare($query);
+        $check = $statement->execute($data_array);
 
-		return false;
+        if ($check) {
+            $result = $statement->fetchAll(PDO::FETCH_OBJ);
+            if (is_array($result) && count($result) > 0) {
+                return $result;
+            }
+            return false;
+        }
 
-	}
+        return false;
+    }
 
-	//write to database
-	public function write($query,$data_array = [])
-	{
+    // Get user by ID
+    public function get_user($userid)
+    {
+        $con = $this->connect();
+        $arr['userid'] = $userid;
+        $query = "SELECT * FROM users WHERE userid = :userid LIMIT 1";
+        $statement = $con->prepare($query);
+        $check = $statement->execute($arr);
 
-		$con = $this->connect();
-		$statement = $con->prepare($query);
-		$check = $statement->execute($data_array);
+        if ($check) {
+            $result = $statement->fetchAll(PDO::FETCH_OBJ);
+            if (is_array($result) && count($result) > 0) {
+                return $result[0];
+            }
+            return false;
+        }
 
-		if($check)
-		{
-			return true;
-		}
+        return false;
+    }
 
-		return false;
+    // Generate a random ID
+    public function generate_id($max)
+    {
+        $rand = "";
+        $rand_count = rand(4, $max);
+        for ($i = 0; $i < $rand_count; $i++) {
+            $r = rand(0, 9);
+            $rand .= $r;
+        }
 
-	}
-
-	//read from database
-	public function read($query,$data_array = [])
-	{
-
-		$con = $this->connect();
-		$statement = $con->prepare($query);
-		$check = $statement->execute($data_array);
-
-		if($check)
-		{
-			$result = $statement->fetchAll(PDO::FETCH_OBJ);
-			if(is_array($result) && count($result) > 0)
-			{
-				return $result;
-			}
-			return false;
-		}
-
-		return false;
-
-	}
-	
-	
-	public function get_user($userid)
-	{
-
-		$con = $this->connect();
-		$arr['userid'] = $userid;
-		$query = "select * from users where userid = :userid limit 1";
-		$statement = $con->prepare($query);
-		$check = $statement->execute($arr);
-
-		if($check)
-		{
-			$result = $statement->fetchAll(PDO::FETCH_OBJ);
-			if(is_array($result) && count($result) > 0)
-			{
-				return $result[0];
-			}
-			return false;
-		}
-
-		return false;
-
-	}
-	
-
-	public function generate_id($max)
-	{
-
-		$rand = "";
-		$rand_count = rand(4,$max);
-		for ($i=0; $i < $rand_count; $i++) { 
-			# code...
-			$r = rand(0,9);
-			$rand .= $r;
-		}
-
-		return $rand;
-	}
+        return $rand;
+    }
 }
-
-

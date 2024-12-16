@@ -1,6 +1,16 @@
-<?php 
+<?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1); 
 
 session_start();
+
+if(session_status() !== PHP_SESSION_ACTIVE) {
+
+    echo "Session not active";
+
+    die();
+
+}
 
 $DATA_RAW = file_get_contents("php://input");
 $DATA_OBJ = json_decode($DATA_RAW);

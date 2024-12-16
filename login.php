@@ -147,24 +147,39 @@
 
    	function send_data(data,type){
 
-   		var xml = new XMLHttpRequest();
+    var xml = new XMLHttpRequest();
 
-   		xml.onload = function(){
+    xml.onload = function(){
 
-   			if(xml.readyState == 4 || xml.status == 200){
+        if(xml.readyState == 4 || xml.status == 200){
 
-   				handle_result(xml.responseText);
-   				login_button.disabled = false;
-   				login_button.value = "Login";
-   			}
-   		}
+            console.log("Server response:", xml.responseText); // Add debugging
 
-		data.data_type = type;
-		var data_string = JSON.stringify(data);
+            handle_result(xml.responseText);
 
-		xml.open("POST","api.php",true);
-		xml.send(data_string);
-   	}
+            login_button.disabled = false;
+
+            login_button.value = "Login";
+
+        }
+
+    }
+
+
+    data.data_type = type;
+
+    var data_string = JSON.stringify(data);
+
+
+    // Update the URL to use port 8084
+
+    xml.open("POST","http://localhost:8084/api.php",true);
+
+    xml.setRequestHeader("Content-Type", "application/json");
+
+    xml.send(data_string);
+
+}
 
    	function handle_result(result){
 
