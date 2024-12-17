@@ -1,12 +1,12 @@
 <?php 
-$info = (Object)[];
+// Set proper content type header if not already set in api.php
+header('Content-Type: application/json');
 
-// Initialize $data as an array instead of false
-$data = array();  // Change this line
+$info = (Object)[];
+$data = []; // Initialize as array instead of false
+$Error = ""; // Initialize Error variable
 
 //validate info
-$data['email'] = $DATA_OBJ->email;
-
 if(empty($DATA_OBJ->email)) {
     $Error = "please enter a valid email";
 }
@@ -16,8 +16,11 @@ if(empty($DATA_OBJ->password)) {
 }
 
 if($Error == "") {
+    // Only set email after validation
+    $data['email'] = $DATA_OBJ->email;
+    
     $query = "select * from users where email = :email limit 1";
-    $result = $DB->read($query, $data);
+    $result = $DB->read($query,$data);
 
     if(is_array($result)) {
         $result = $result[0];
@@ -25,18 +28,19 @@ if($Error == "") {
             $_SESSION['userid'] = $result->userid;
             $info->message = "You're successfully logged in";
             $info->data_type = "info";
+            echo json_encode($info);
         } else {
             $info->message = "Wrong password";
             $info->data_type = "error";
+            echo json_encode($info);
         }
     } else {
         $info->message = "Wrong email";
         $info->data_type = "error";
+        echo json_encode($info);
     }
 } else {
     $info->message = $Error;
     $info->data_type = "error";
+    echo json_encode($info);
 }
-
-echo json_encode($info);
-die;
