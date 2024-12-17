@@ -1,12 +1,12 @@
 <?php 
 $info = (Object)[];
+$Error = ""; // Initialize Error variable
 
-// Initialize $data as an array instead of false
-$data = array();  // Change this line
-
-//validate info
+// Initialize $data as an array
+$data = array();
 $data['email'] = $DATA_OBJ->email;
 
+// Validate info
 if(empty($DATA_OBJ->email)) {
     $Error = "please enter a valid email";
 }

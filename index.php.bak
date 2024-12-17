@@ -129,15 +129,23 @@
             }
 
             function handle_result(result) {
-                var data = JSON.parse(result);
-                if (data.data_type === "info") {
-                    window.location = "index.php";
-                } else {
-                    var error = _("error");
-                    error.textContent = data.message;  // Use textContent for safety
-                    error.style.display = "block";
-                }
-            }
+    try {
+        var data = JSON.parse(result);
+        if(data.data_type == "info") {
+            window.location = "index.php";
+        } else {
+            var error = _("error");
+            error.textContent = data.message;
+            error.style.display = "block";
+        }
+    } catch(e) {
+        console.error("JSON Parse Error:", e);
+        console.log("Raw response:", result);
+        var error = _("error");
+        error.textContent = "An error occurred during login";
+        error.style.display = "block";
+    }
+}
 
             // The get_data function can also be defined here if needed
         }

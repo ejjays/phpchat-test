@@ -110,23 +110,22 @@
             }
 
             function send_data(data, type) {
-                var xml = new XMLHttpRequest();
-                xml.onload = function() {
-                    if (xml.readyState === 4 && xml.status === 200) {
-                        console.log("Server response:", xml.responseText);
-                        handle_result(xml.responseText);
-                        login_button.disabled = false;
-                        login_button.value = "Login";
-                    }
-                }
+    var xml = new XMLHttpRequest();
+    xml.onload = function() {
+        if (xml.readyState === 4 && xml.status === 200) {
+            handle_result(xml.responseText);
+            login_button.disabled = false;
+            login_button.value = "Login";
+        }
+    }
 
-                data.data_type = type;
-                var data_string = JSON.stringify(data);
+    data.data_type = type;
+    var data_string = JSON.stringify(data);
 
-                xml.open("POST", "api.php", true);
-                xml.setRequestHeader("Content-Type", "application/json");
-                xml.send(data_string);
-            }
+    xml.open("POST", "api.php", true);
+    xml.setRequestHeader("Content-Type", "application/json");
+    xml.send(data_string);
+}
 
             function handle_result(result) {
     try {
