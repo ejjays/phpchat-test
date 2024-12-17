@@ -1,7 +1,7 @@
 <?php
 error_reporting(E_ALL);
-ini_set('display_errors', 0); // Change to 0 for production
-header('Content-Type: application/json');
+ini_set('display_errors', 0); // Change to 0 to prevent HTML errors from showing
+header('Content-Type: application/json'); // Add this line
 session_start();
 
 if(session_status() !== PHP_SESSION_ACTIVE) {
